@@ -18,6 +18,8 @@ public:
     {
         Q_ASSERT(uri == QLatin1String("AlembicEntity"));
         qmlRegisterType<AlembicEntity>(uri, 1, 0, "AlembicEntity");
+        qmlRegisterUncreatableType<CameraLocatorEntity>(uri, 1, 0, "CameraLocatorEntity",
+                                                        "Can't create CameraLocatorEntity intances from QML.");
     }
 };
 

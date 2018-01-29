@@ -8,6 +8,8 @@
 #include <Qt3DRender/QObjectPicker>
 #include <Qt3DRender/QPickEvent>
 #include <Qt3DExtras/QPerVertexColorMaterial>
+#include <QUrl>
+#include <QFile>
 
 namespace abcentity
 {
@@ -42,12 +44,17 @@ void AlembicEntity::setLocatorScale(const float& value)
     if(_locatorScale == value)
         return;
     _locatorScale = value;
-    for(auto entity : findChildren<CameraLocatorEntity*>())
-    {
-        for(auto transform : entity->findChildren<Qt3DCore::QTransform*>())
-            transform->setScale(value);
-    }
+    scaleLocators();
     Q_EMIT locatorScaleChanged();
+}
+
+void AlembicEntity::scaleLocators() const
+{
+    for(auto* entity : _cameras)
+    {
+        for(auto* transform : entity->findChildren<Qt3DCore::QTransform*>())
+            transform->setScale(_locatorScale);
+    }
 }
 
 // private
@@ -126,25 +133,32 @@ void AlembicEntity::createMaterials()
     _cloudMaterial->setEffect(effect);
 }
 
+void AlembicEntity::clear()
+{
+    // clear entity (remove direct children & all components)
+    auto entities = findChildren<QEntity*>(QString(), Qt::FindDirectChildrenOnly);
+    for(auto entity : entities)
+    {
+        entity->setParent((QNode*)nullptr);
+        entity->deleteLater();
+    }
+    for(auto& component : components())
+        removeComponent(component);
+    _cameras.clear();
+}
+
 // private
 void AlembicEntity::loadAbcArchive()
 {
-    if(!_url.isValid())
+    clear();
+
+    // ensure file exists and is valid
+    if(!_url.isValid() || !QFile::exists(_url.toLocalFile()))
         return;
 
     using namespace Qt3DRender;
     using namespace Alembic::Abc;
     using namespace Alembic::AbcGeom;
-
-    // clear entity (remove direct children & all components)
-    auto entities = findChildren<QEntity*>("", Qt::FindDirectChildrenOnly);
-    for(auto entity : entities)
-    {
-        entity->setParent((QNode*)nullptr);
-        delete entity;
-    }
-    for(auto& component : components())
-        removeComponent(component);
 
     // load the abc archive
     Alembic::AbcCoreFactory::IFactory factory;
@@ -156,6 +170,12 @@ void AlembicEntity::loadAbcArchive()
     // visit the abc tree
     M44d xformMat;
     visitAbcObject(archive.getTop(), xformMat);
+
+    // store pointers to cameras
+    _cameras = findChildren<CameraLocatorEntity*>();
+
+    // scale locators
+    scaleLocators();
 
     auto onPicked = [&](QPickEvent* pick)
     {
@@ -175,6 +195,8 @@ void AlembicEntity::loadAbcArchive()
 
     for(auto picker : findChildren<QObjectPicker*>())
         QObject::connect(picker, &QObjectPicker::clicked, this, onPicked);
+
+    Q_EMIT camerasChanged();
 }
 
 // private
