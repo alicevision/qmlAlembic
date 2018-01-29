@@ -206,12 +206,17 @@ void AlembicEntity::visitAbcObject(Alembic::Abc::IObject iObj, Alembic::Abc::M44
     using namespace Alembic::AbcGeom;
 
     const MetaData& md = iObj.getMetaData();
+
     if(IPoints::matches(md))
     {
         auto cloud = new PointCloudEntity(this);
         cloud->setData(iObj);
         cloud->setTransform(mat);
         cloud->addComponent(_cloudMaterial);
+        IPoints points(iObj, Alembic::Abc::kWrapExisting);
+        cloud->setObjectName(points.getName().c_str());
+        cloud->fillArbProperties(points.getSchema().getArbGeomParams());
+        cloud->fillUserProperties(points.getSchema().getUserProperties());
     }
     else if(IXform::matches(md))
     {
@@ -225,6 +230,10 @@ void AlembicEntity::visitAbcObject(Alembic::Abc::IObject iObj, Alembic::Abc::M44
         auto cameraLocator = new CameraLocatorEntity(this);
         cameraLocator->setTransform(mat);
         cameraLocator->addComponent(_cameraMaterial);
+        ICamera cam(iObj, Alembic::Abc::kWrapExisting);
+        cameraLocator->setObjectName(cam.getName().c_str());
+        cameraLocator->fillArbProperties(cam.getSchema().getArbGeomParams());
+        cameraLocator->fillUserProperties(cam.getSchema().getUserProperties());
     }
 
     // visit children
