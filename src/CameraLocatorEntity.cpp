@@ -9,7 +9,7 @@ namespace abcentity
 {
 
 CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
-    : Qt3DCore::QEntity(parent)
+    : BaseAlembicObject(parent)
 {
     using namespace Qt3DRender;
 
@@ -81,16 +81,6 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     // add components
     addComponent(customMeshRenderer);
     addComponent(picker);
-}
-
-void CameraLocatorEntity::setTransform(const Alembic::Abc::M44d& mat)
-{
-    Qt3DCore::QTransform* transform = new Qt3DCore::QTransform;
-    QMatrix4x4 qmat(mat[0][0], mat[1][0], mat[2][0], mat[3][0], mat[0][1], mat[1][1], mat[2][1],
-                    mat[3][1], mat[0][2], mat[1][2], mat[2][2], mat[3][2], mat[0][3], mat[1][3],
-                    mat[2][3], mat[3][3]);
-    transform->setMatrix(qmat);
-    addComponent(transform);
 }
 
 } // namespace
