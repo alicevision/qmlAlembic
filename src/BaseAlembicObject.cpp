@@ -9,12 +9,12 @@ BaseAlembicObject::BaseAlembicObject(Qt3DCore::QNode* parent)
 {
 }
 
-void BaseAlembicObject::fillArbProperties(const Alembic::Abc::v7::ICompoundProperty &iParent)
+void BaseAlembicObject::fillArbProperties(const Alembic::Abc::ICompoundProperty &iParent)
 {
     fillPropertyMap(iParent, _arbProperties);
 }
 
-void BaseAlembicObject::fillUserProperties(const Alembic::Abc::v7::ICompoundProperty &iParent)
+void BaseAlembicObject::fillUserProperties(const Alembic::Abc::ICompoundProperty &iParent)
 {
     fillPropertyMap(iParent, _userProperties);
 }
