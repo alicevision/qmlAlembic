@@ -3,8 +3,16 @@ file(GLOB_RECURSE TARGET_SRCS *.cpp *.cxx *.cc *.C *.c *.h *.hpp)
 
 # Target properties
 add_library(alembicEntityQmlPlugin SHARED ${TARGET_SRCS})
-target_link_libraries(alembicEntityQmlPlugin ${ABC_LIBRARIES})
-QT5_USE_MODULES(alembicEntityQmlPlugin Core Qml Quick 3DCore 3DRender 3DExtras)
+
+target_link_libraries(alembicEntityQmlPlugin
+    Qt5::Core
+    Qt5::Qml
+    Qt5::Quick
+    Qt5::3DCore
+    Qt5::3DRender
+    Qt5::3DExtras
+    Alembic::Alembic
+)
 
 # Install settings
 install(FILES "qmldir"
