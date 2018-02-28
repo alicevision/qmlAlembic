@@ -16,7 +16,6 @@ find_package(Qt5Quick REQUIRED)
 add_definitions(-DQT_NO_KEYWORDS)
 
 # Alembic dependency
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
 find_package(Alembic REQUIRED)
 include_directories(${ABC_INCLUDE_DIR})
 
