@@ -6,7 +6,7 @@ qmlAlembic requires:
 * [Qt5](https://www.qt.io/) (>= 5.10, make sure to use the **same version** as the target application)
 * [Alembic](https://github.com/alembic/alembic) (>= 1.7)
 * [CMake](https://cmake.org/) (>= 3.3)
-* Windows: Microsoft Visual Studio (>= 2015.3)
+* On Windows platform: Microsoft Visual Studio (>= 2015.3)
 
 > **Note for Windows**:
 We recommend using [VCPKG](https://github.com/Microsoft/vcpkg) to get Alembic. Qt version there is too old at the moment though, using official installer is necessary.
