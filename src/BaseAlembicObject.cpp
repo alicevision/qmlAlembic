@@ -82,7 +82,7 @@ void BaseAlembicObject::addArrayProperty<std::string>(QVariantMap& data, const A
 }
 
 template<typename PODTYPE>
-void BaseAlembicObject::addProperty(QVariantMap& data, const Alembic::Abc::ICompoundProperty iParent, const Alembic::Abc::PropertyHeader& propHeader)
+void BaseAlembicObject::addProperty(QVariantMap& data, const Alembic::Abc::ICompoundProperty& iParent, const Alembic::Abc::PropertyHeader& propHeader)
 {
     if(propHeader.isArray())
     {
