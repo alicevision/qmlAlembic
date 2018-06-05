@@ -2,10 +2,6 @@
 
 #include "BaseAlembicObject.hpp"
 
-#include <QEntity>
-#include <Alembic/AbcGeom/All.h>
-#include <Alembic/AbcCoreFactory/All.h>
-
 namespace abcentity
 {
 
