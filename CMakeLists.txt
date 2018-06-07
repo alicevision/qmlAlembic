@@ -1,8 +1,5 @@
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 3.3)
 project(alembicEntityQmlPlugin)
-
-# Cmake module path
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Qt dependency
 if(POLICY CMP0043)
@@ -12,12 +9,12 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
-find_package(Qt5Quick REQUIRED)
+find_package(Qt53DCore REQUIRED)
+find_package(Qt53DExtras REQUIRED)
+find_package(Qt53DRender REQUIRED)
 add_definitions(-DQT_NO_KEYWORDS)
 
 # Alembic dependency
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
-find_package(Alembic REQUIRED)
-include_directories(${ABC_INCLUDE_DIR})
+find_package(Alembic 1.7 REQUIRED)
 
 add_subdirectory(src)

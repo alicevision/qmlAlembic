@@ -18,12 +18,12 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     QGeometry* customGeometry = new QGeometry;
 
     // vertices buffer
-    QVector<float> points{0.f,  0.f,  0.f,  0.5,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.5,
-                          0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.5,  0.f,  0.f,  0.f,  -0.3,
-                          0.2,  -0.3, 0.f,  0.f,  0.f,  -0.3, -0.2, -0.3, 0.f,  0.f,  0.f,
-                          0.3,  -0.2, -0.3, 0.f,  0.f,  0.f,  0.3,  0.2,  -0.3, -0.3, 0.2,
-                          -0.3, -0.3, -0.2, -0.3, -0.3, -0.2, -0.3, 0.3,  -0.2, -0.3, 0.3,
-                          -0.2, -0.3, 0.3,  0.2,  -0.3, 0.3,  0.2,  -0.3, -0.3, 0.2,  -0.3};
+    QVector<float> points{0.f,  0.f,  0.f,  0.5f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.5f,
+                          0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.5f,  0.f,  0.f,  0.f,  -0.3f,
+                          0.2f,  -0.3f, 0.f,  0.f,  0.f,  -0.3f, -0.2f, -0.3f, 0.f,  0.f,  0.f,
+                          0.3f,  -0.2f, -0.3f, 0.f,  0.f,  0.f,  0.3f,  0.2f,  -0.3f, -0.3f, 0.2f,
+                          -0.3f, -0.3f, -0.2f, -0.3f, -0.3f, -0.2f, -0.3f, 0.3f,  -0.2f, -0.3f, 0.3f,
+                          -0.2f, -0.3f, 0.3f,  0.2f,  -0.3f, 0.3f,  0.2f,  -0.3f, -0.3f, 0.2f,  -0.3f};
     QByteArray positionData((const char*)points.data(), points.size() * sizeof(float));
     QBuffer* vertexDataBuffer = new QBuffer(QBuffer::VertexBuffer);
     vertexDataBuffer->setData(positionData);

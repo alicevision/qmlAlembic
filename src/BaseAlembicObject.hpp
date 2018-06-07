@@ -37,10 +37,10 @@ protected:
     void addScalarProperty(QVariantMap& data, const Alembic::Abc::IScalarProperty& prop);
 
     template<typename PODTYPE>
-    void addArrayProperty(QVariantMap &data, const Alembic::Abc::IArrayProperty &prop);
+    void addArrayProperty(QVariantMap &data, const Alembic::Abc::IArrayProperty& prop);
 
     template<typename PODTYPE>
-    void addProperty(QVariantMap& data, const Alembic::Abc::ICompoundProperty iParent, const Alembic::Abc::PropertyHeader& propHeader);
+    void addProperty(QVariantMap& data, const Alembic::Abc::ICompoundProperty& iParent, const Alembic::Abc::PropertyHeader& propHeader);
 
 protected:
     QVariantMap _arbProperties;
