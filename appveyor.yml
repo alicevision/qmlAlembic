@@ -5,14 +5,14 @@ image: Visual Studio 2015
 configuration:
   - Release
 
+platform:
+  - x64
+
 environment:
-  CMAKE_GENERATOR: "NMake Makefiles JOM"
-  QT5: C:\Qt\5.11.0\msvc2015_64
-  PLATFORM: X64
-  VSVER: 14
+  QT5: C:\Qt\5.11.0\msvc2015_64 
+  APPVEYOR_SAVE_CACHE_ON_ERROR: true
 
 install:
-  - vcpkg upgrade
   - vcpkg list
   - vcpkg install
         alembic
@@ -20,24 +20,20 @@ install:
   - vcpkg list
  
 before_build:
-  - set PATH=C:\Qt\Tools\QtCreator\bin;%PATH%
+    - md build
+    - cd build
+    - cmake .. -G "Visual Studio 14 2015 Win64"
+            -DCMAKE_BUILD_TYPE=%CONFIGURATION%
+            -DCMAKE_PREFIX_PATH=%QT5% 
+            -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake 
 
-# build_script:
-#     - ps: $env:VSCOMNTOOLS=(Get-Content ("env:VS" + "$env:VSVER" + "0COMNTOOLS"))
-#     - md build
-#     - cd build
-#     - cmake .. -G "%CMAKE_GENERATOR%"
-#             -DCMAKE_PREFIX_PATH=%QT5%
-#             -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
-
-#     - "%VSCOMNTOOLS%\..\..\VC\vcvarsall.bat" x86_amd64
-#     - cmake --build . --config %CONFIGURATION%
- 
 build:
- 
+  project: $(APPVEYOR_BUILD_FOLDER)\build\INSTALL.vcxproj
+  verbosity: minimal
+
 # comment the above and uncomment the following to just build the dependencies
-build_script:
- - echo "Dependencies installed."
+# build_script:
+#  - echo "Dependencies installed."
  
 cache:
   c:\tools\vcpkg\installed\
