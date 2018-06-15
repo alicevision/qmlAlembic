@@ -15,6 +15,13 @@ target_link_libraries(alembicEntityQmlPlugin
     Qt5::3DExtras
 )
 
+# CMake Find modules
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+# Add missing include path to IlmBase/OpenEXR include folder
+find_package(IlmBase REQUIRED)
+target_include_directories(alembicEntityQmlPlugin PUBLIC ${ILMBASE_INCLUDE_DIR})
+
 # Install settings
 install(FILES "qmldir"
         DESTINATION ${CMAKE_INSTALL_PREFIX}/qml/AlembicEntity)

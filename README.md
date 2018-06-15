@@ -7,6 +7,9 @@ It has been developed to load [AliceVision](https://github.com/alicevision/Alice
 
 For now, it only handles point clouds and cameras.
 
+Continuous integration:
+* Windows: [![Build status](https://ci.appveyor.com/api/projects/status/g256moy4i36w7cpi/branch/develop?svg=true)](https://ci.appveyor.com/project/AliceVision/qmlalembic/branch/develop)
+
 ## License
 
 The project is released under MPLv2, see [**COPYING.md**](COPYING.md).
