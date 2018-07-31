@@ -200,7 +200,7 @@ void AlembicEntity::loadAbcArchive()
 }
 
 // private
-void AlembicEntity::visitAbcObject(const Alembic::Abc::IObject& iObj, Alembic::Abc::M44d& mat)
+void AlembicEntity::visitAbcObject(const Alembic::Abc::IObject& iObj, Alembic::Abc::M44d mat)
 {
     using namespace Alembic::Abc;
     using namespace Alembic::AbcGeom;

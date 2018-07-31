@@ -40,7 +40,7 @@ private:
     void clear();
     void createMaterials();
     void loadAbcArchive();
-    void visitAbcObject(const Alembic::Abc::IObject&, Alembic::Abc::M44d&);
+    void visitAbcObject(const Alembic::Abc::IObject&, Alembic::Abc::M44d);
 
     QQmlListProperty<CameraLocatorEntity> cameras() {
         return QQmlListProperty<CameraLocatorEntity>(this, _cameras);
