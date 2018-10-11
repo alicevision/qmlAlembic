@@ -75,12 +75,8 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     camera->setPosition(QVector3D(0.0f, 3.5f, 25.0f));
     */
 
-    // object picker
-    auto picker = new QObjectPicker;
-
     // add components
     addComponent(customMeshRenderer);
-    addComponent(picker);
 }
 
 } // namespace
