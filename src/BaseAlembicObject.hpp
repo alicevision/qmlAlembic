@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QEntity>
+#include <Qt3DCore/QTransform>
 #include <Alembic/AbcGeom/All.h>
 
 namespace abcentity
@@ -45,6 +46,7 @@ protected:
 protected:
     QVariantMap _arbProperties;
     QVariantMap _userProperties;
+    Qt3DCore::QTransform* _transform;
 };
 
 }
