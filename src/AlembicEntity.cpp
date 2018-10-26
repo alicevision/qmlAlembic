@@ -168,8 +168,7 @@ void AlembicEntity::loadAbcArchive()
         return;
 
     // visit the abc tree
-    M44d xformMat;
-    visitAbcObject(archive.getTop(), xformMat);
+    visitAbcObject(archive.getTop(), this);
 
     // store pointers to cameras
     _cameras = findChildren<CameraLocatorEntity*>();
@@ -200,45 +199,57 @@ void AlembicEntity::loadAbcArchive()
 }
 
 // private
-void AlembicEntity::visitAbcObject(const Alembic::Abc::IObject& iObj, Alembic::Abc::M44d mat)
+void AlembicEntity::visitAbcObject(const Alembic::Abc::IObject& iObj, QEntity* parent)
 {
     using namespace Alembic::Abc;
     using namespace Alembic::AbcGeom;
 
-    const MetaData& md = iObj.getMetaData();
+    const auto createEntity = [&](const IObject& iObject) -> BaseAlembicObject* {
+        const MetaData& md = iObj.getMetaData();
+        
+        if(IPoints::matches(md))
+        {
+            IPoints points(iObj, Alembic::Abc::kWrapExisting);
+            PointCloudEntity* entity = new PointCloudEntity(parent);
+            entity->setData(iObj);
+            entity->addComponent(_cloudMaterial);
+            entity->fillArbProperties(points.getSchema().getArbGeomParams());
+            entity->fillUserProperties(points.getSchema().getUserProperties());
+            return entity;
+        }
+        else if(IXform::matches(md))
+        {
+            IXform xform(iObj, kWrapExisting);
+            BaseAlembicObject* entity = new BaseAlembicObject(parent);
+            XformSample xs;
+            xform.getSchema().get(xs);
+            entity->setTransform(xs.getMatrix());
+            entity->fillArbProperties(xform.getSchema().getArbGeomParams());
+            entity->fillUserProperties(xform.getSchema().getUserProperties());
+            return entity;
+        }
+        else if(ICamera::matches(md))
+        {
+            ICamera cam(iObj, Alembic::Abc::kWrapExisting);
+            CameraLocatorEntity* entity = new CameraLocatorEntity(parent);
+            entity->addComponent(_cameraMaterial);
+            entity->fillArbProperties(cam.getSchema().getArbGeomParams());
+            entity->fillUserProperties(cam.getSchema().getUserProperties());
+            return entity;
+        }
+        else
+        {
+            // fallback: create empty object to preserve hierarchy
+            return new BaseAlembicObject(parent);
+        }
+    };
 
-    if(IPoints::matches(md))
-    {
-        auto cloud = new PointCloudEntity(this);
-        cloud->setData(iObj);
-        cloud->setTransform(mat);
-        cloud->addComponent(_cloudMaterial);
-        IPoints points(iObj, Alembic::Abc::kWrapExisting);
-        cloud->setObjectName(points.getName().c_str());
-        cloud->fillArbProperties(points.getSchema().getArbGeomParams());
-        cloud->fillUserProperties(points.getSchema().getUserProperties());
-    }
-    else if(IXform::matches(md))
-    {
-        IXform xform(iObj, kWrapExisting);
-        XformSample xs;
-        xform.getSchema().get(xs);
-        mat *= xs.getMatrix();
-    }
-    else if(ICamera::matches(md))
-    {
-        auto cameraLocator = new CameraLocatorEntity(this);
-        cameraLocator->setTransform(mat);
-        cameraLocator->addComponent(_cameraMaterial);
-        ICamera cam(iObj, Alembic::Abc::kWrapExisting);
-        cameraLocator->setObjectName(cam.getName().c_str());
-        cameraLocator->fillArbProperties(cam.getSchema().getArbGeomParams());
-        cameraLocator->fillUserProperties(cam.getSchema().getUserProperties());
-    }
+    BaseAlembicObject* entity = createEntity(iObj);
+    entity->setObjectName(iObj.getName().c_str());
 
     // visit children
     for(size_t i = 0; i < iObj.getNumChildren(); i++)
-        visitAbcObject(iObj.getChild(i), mat);
+        visitAbcObject(iObj.getChild(i), entity);
 }
 
 } // namespace
