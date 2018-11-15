@@ -8,7 +8,6 @@
 #include <Qt3DRender/QObjectPicker>
 #include <Qt3DRender/QPickEvent>
 #include <Qt3DExtras/QPerVertexColorMaterial>
-#include <QUrl>
 #include <QFile>
 
 namespace abcentity
@@ -21,13 +20,13 @@ AlembicEntity::AlembicEntity(Qt3DCore::QNode* parent)
     createMaterials();
 }
 
-void AlembicEntity::setUrl(const QUrl& value)
+void AlembicEntity::setSource(const QUrl& value)
 {
-    if(_url == value)
+    if(_source == value)
         return;
-    _url = value;
+    _source = value;
     loadAbcArchive();
-    Q_EMIT urlChanged();
+    Q_EMIT sourceChanged();
 }
 
 void AlembicEntity::setParticleSize(const float& value)
@@ -153,7 +152,7 @@ void AlembicEntity::loadAbcArchive()
     clear();
 
     // ensure file exists and is valid
-    if(!_url.isValid() || !QFile::exists(_url.toLocalFile()))
+    if(!_source.isValid() || !QFile::exists(_source.toLocalFile()))
         return;
 
     using namespace Qt3DRender;
@@ -163,7 +162,7 @@ void AlembicEntity::loadAbcArchive()
     // load the abc archive
     Alembic::AbcCoreFactory::IFactory factory;
     Alembic::AbcCoreFactory::IFactory::CoreType coreType;
-    Abc::IArchive archive = factory.getArchive(_url.toLocalFile().toStdString(), coreType);
+    Abc::IArchive archive = factory.getArchive(_source.toLocalFile().toStdString(), coreType);
     if(!archive.valid())
         return;
 

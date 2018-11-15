@@ -16,7 +16,7 @@ class CameraLocatorEntity;
 class AlembicEntity : public Qt3DCore::QEntity
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
+    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(
         float particleSize READ particleSize WRITE setParticleSize NOTIFY particleSizeChanged)
     Q_PROPERTY(
@@ -28,10 +28,10 @@ public:
     ~AlembicEntity() = default;
 
 public:
-    Q_SLOT const QUrl& url() const { return _url; }
+    Q_SLOT const QUrl& source() const { return _source; }
     Q_SLOT const float& particleSize() const { return _particleSize; }
     Q_SLOT const float& locatorScale() const { return _locatorScale; }
-    Q_SLOT void setUrl(const QUrl&);
+    Q_SLOT void setSource(const QUrl&);
     Q_SLOT void setParticleSize(const float&);
     Q_SLOT void setLocatorScale(const float&);
 
@@ -47,7 +47,7 @@ private:
     }
 
 public:
-    Q_SIGNAL void urlChanged();
+    Q_SIGNAL void sourceChanged();
     Q_SIGNAL void camerasChanged();
     Q_SIGNAL void particleSizeChanged();
     Q_SIGNAL void locatorScaleChanged();
@@ -58,7 +58,7 @@ protected:
     void scaleLocators() const;
 
 private:
-    QUrl _url;
+    QUrl _source;
     float _particleSize = 0.5;
     float _locatorScale = 1.0;
     Qt3DRender::QParameter* _particleSizeParameter;
