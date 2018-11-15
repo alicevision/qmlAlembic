@@ -144,6 +144,7 @@ void AlembicEntity::clear()
     for(auto& component : components())
         removeComponent(component);
     _cameras.clear();
+    _pointClouds.clear();
 }
 
 // private
@@ -169,8 +170,9 @@ void AlembicEntity::loadAbcArchive()
     // visit the abc tree
     visitAbcObject(archive.getTop(), this);
 
-    // store pointers to cameras
+    // store pointers to cameras and point clouds
     _cameras = findChildren<CameraLocatorEntity*>();
+    _pointClouds = findChildren<PointCloudEntity*>();
 
     // scale locators
     scaleLocators();
@@ -195,6 +197,7 @@ void AlembicEntity::loadAbcArchive()
         QObject::connect(picker, &QObjectPicker::clicked, this, onPicked);
 
     Q_EMIT camerasChanged();
+    Q_EMIT pointCloudsChanged();
 }
 
 // private

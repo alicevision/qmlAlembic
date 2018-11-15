@@ -20,6 +20,8 @@ public:
         qmlRegisterType<AlembicEntity>(uri, 1, 0, "AlembicEntity");
         qmlRegisterUncreatableType<CameraLocatorEntity>(uri, 1, 0, "CameraLocatorEntity",
                                                         "Can't create CameraLocatorEntity intances from QML.");
+        qmlRegisterUncreatableType<PointCloudEntity>(uri, 1, 0, "PointCloudEntity",
+                                                        "Can't create PointCloudEntity intances from QML.");
     }
 };
 

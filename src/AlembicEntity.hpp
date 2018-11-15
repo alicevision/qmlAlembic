@@ -12,6 +12,7 @@
 namespace abcentity
 {
 class CameraLocatorEntity;
+class PointCloudEntity;
 
 class AlembicEntity : public Qt3DCore::QEntity
 {
@@ -22,6 +23,7 @@ class AlembicEntity : public Qt3DCore::QEntity
     Q_PROPERTY(
         float locatorScale READ locatorScale WRITE setLocatorScale NOTIFY locatorScaleChanged)
     Q_PROPERTY(QQmlListProperty<abcentity::CameraLocatorEntity> cameras READ cameras NOTIFY camerasChanged)
+    Q_PROPERTY(QQmlListProperty<abcentity::PointCloudEntity> pointClouds READ pointClouds NOTIFY pointCloudsChanged)
 
 public:
     AlembicEntity(Qt3DCore::QNode* = nullptr);
@@ -46,10 +48,15 @@ private:
         return QQmlListProperty<CameraLocatorEntity>(this, _cameras);
     }
 
+    QQmlListProperty<PointCloudEntity> pointClouds() {
+        return QQmlListProperty<PointCloudEntity>(this, _pointClouds);
+    }
+
 public:
     Q_SIGNAL void sourceChanged();
     Q_SIGNAL void camerasChanged();
     Q_SIGNAL void particleSizeChanged();
+    Q_SIGNAL void pointCloudsChanged();
     Q_SIGNAL void locatorScaleChanged();
     Q_SIGNAL void objectPicked(Qt3DCore::QTransform* transform);
 
@@ -65,6 +72,7 @@ private:
     Qt3DRender::QMaterial* _cloudMaterial;
     Qt3DRender::QMaterial* _cameraMaterial;
     QList<CameraLocatorEntity*> _cameras;
+    QList<PointCloudEntity*> _pointClouds;
 };
 
 } // namespace
