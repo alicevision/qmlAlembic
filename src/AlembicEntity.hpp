@@ -19,7 +19,7 @@ class AlembicEntity : public Qt3DCore::QEntity
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(
-        float particleSize READ particleSize WRITE setParticleSize NOTIFY particleSizeChanged)
+        float pointSize READ pointSize WRITE setPointSize NOTIFY pointSizeChanged)
     Q_PROPERTY(
         float locatorScale READ locatorScale WRITE setLocatorScale NOTIFY locatorScaleChanged)
     Q_PROPERTY(QQmlListProperty<abcentity::CameraLocatorEntity> cameras READ cameras NOTIFY camerasChanged)
@@ -31,10 +31,10 @@ public:
 
 public:
     Q_SLOT const QUrl& source() const { return _source; }
-    Q_SLOT const float& particleSize() const { return _particleSize; }
+    Q_SLOT float pointSize() const { return _pointSize; }
     Q_SLOT const float& locatorScale() const { return _locatorScale; }
     Q_SLOT void setSource(const QUrl&);
-    Q_SLOT void setParticleSize(const float&);
+    Q_SLOT void setPointSize(const float& value);
     Q_SLOT void setLocatorScale(const float&);
 
 private:
@@ -55,7 +55,7 @@ private:
 public:
     Q_SIGNAL void sourceChanged();
     Q_SIGNAL void camerasChanged();
-    Q_SIGNAL void particleSizeChanged();
+    Q_SIGNAL void pointSizeChanged();
     Q_SIGNAL void pointCloudsChanged();
     Q_SIGNAL void locatorScaleChanged();
     Q_SIGNAL void objectPicked(Qt3DCore::QTransform* transform);
@@ -66,9 +66,9 @@ protected:
 
 private:
     QUrl _source;
-    float _particleSize = 0.5;
+    float _pointSize = 0.5f;
     float _locatorScale = 1.0;
-    Qt3DRender::QParameter* _particleSizeParameter;
+    Qt3DRender::QParameter* _pointSizeParameter;
     Qt3DRender::QMaterial* _cloudMaterial;
     Qt3DRender::QMaterial* _cameraMaterial;
     QList<CameraLocatorEntity*> _cameras;
