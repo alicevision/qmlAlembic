@@ -1,4 +1,5 @@
 #include "AlembicEntity.hpp"
+#include "IOThread.hpp"
 #include "CameraLocatorEntity.hpp"
 #include "PointCloudEntity.hpp"
 #include <Qt3DRender/QEffect>
@@ -10,13 +11,18 @@
 #include <Qt3DExtras/QPerVertexColorMaterial>
 #include <QFile>
 
+using namespace Alembic::Abc;
+using namespace Alembic::AbcGeom;
+
 namespace abcentity
 {
 
 AlembicEntity::AlembicEntity(Qt3DCore::QNode* parent)
     : Qt3DCore::QEntity(parent)
+    , _ioThread(new IOThread())
     , _pointSizeParameter(new Qt3DRender::QParameter)
 {
+    connect(_ioThread.get(), &IOThread::finished, this, &AlembicEntity::onIOThreadFinished);
     createMaterials();
 }
 
@@ -128,51 +134,43 @@ void AlembicEntity::clear()
 void AlembicEntity::loadAbcArchive()
 {
     clear();
-
-    // ensure file exists and is valid
-    if(!_source.isValid() || !QFile::exists(_source.toLocalFile()))
-        return;
-
-    using namespace Qt3DRender;
-    using namespace Alembic::Abc;
-    using namespace Alembic::AbcGeom;
-
-    // load the abc archive
-    Alembic::AbcCoreFactory::IFactory factory;
-    Alembic::AbcCoreFactory::IFactory::CoreType coreType;
-    Abc::IArchive archive = factory.getArchive(_source.toLocalFile().toStdString(), coreType);
-    if(!archive.valid())
-        return;
-
-    // visit the abc tree
-    visitAbcObject(archive.getTop(), this);
-
-    // store pointers to cameras and point clouds
-    _cameras = findChildren<CameraLocatorEntity*>();
-    _pointClouds = findChildren<PointCloudEntity*>();
-
-    // scale locators
-    scaleLocators();
-
-    auto onPicked = [&](QPickEvent* pick)
+    if(_source.isEmpty())
     {
-        auto picker = (QObjectPicker*)sender();
-        for(auto e : picker->entities())
-        {
-            for(auto c : e->components())
-            {
-                if(c->isEnabled() && c->inherits("Qt3DCore::QTransform"))
-                {
-                    Q_EMIT objectPicked(qobject_cast<Qt3DCore::QTransform*>(c));
-                    break;
-                }
-            }
-        }
-    };
+        setStatus(AlembicEntity::None);
+        return;
+    }
+    setStatus(AlembicEntity::Loading);
+    _ioThread->read(_source);
+}
 
-    for(auto picker : findChildren<QObjectPicker*>())
-        QObject::connect(picker, &QObjectPicker::clicked, this, onPicked);
+void AlembicEntity::onIOThreadFinished()
+{   
+    const auto& archive = _ioThread->archive();
+    if(!archive.valid())
+    {
+        setStatus(AlembicEntity::Error);
+        return;
+    }
+    // visit the abc tree
+    try 
+    {
+        visitAbcObject(archive.getTop(), this);
 
+        // store pointers to cameras and point clouds
+        _cameras = findChildren<CameraLocatorEntity*>();
+        _pointClouds = findChildren<PointCloudEntity*>();
+
+        // perform initial locator scaling
+        scaleLocators();
+
+        setStatus(AlembicEntity::Ready);
+    }
+    catch(...)
+    {
+        clear();
+        setStatus(AlembicEntity::Error);
+    }
+    _ioThread->clear();
     Q_EMIT camerasChanged();
     Q_EMIT pointCloudsChanged();
 }
