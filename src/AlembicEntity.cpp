@@ -221,6 +221,19 @@ void AlembicEntity::visitAbcObject(const Alembic::Abc::IObject& iObj, QEntity* p
         }
     };
 
+    if(_skipHidden)
+    {
+        // Skip objects with visibilityProperty explicitly set to hidden
+        const auto& prop = iObj.getProperties();
+
+        if(prop.getPropertyHeader(kVisibilityPropertyName))
+        {
+            IVisibilityProperty visibilityProperty(prop, kVisibilityPropertyName);
+            if(ObjectVisibility(visibilityProperty.getValue()) == kVisibilityHidden)
+                return;
+        }
+    }
+
     BaseAlembicObject* entity = createEntity(iObj);
     entity->setObjectName(iObj.getName().c_str());
 

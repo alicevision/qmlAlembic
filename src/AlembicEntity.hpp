@@ -19,6 +19,7 @@ class AlembicEntity : public Qt3DCore::QEntity
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(bool skipHidden MEMBER _skipHidden NOTIFY skipHiddenChanged)
     Q_PROPERTY(float pointSize READ pointSize WRITE setPointSize NOTIFY pointSizeChanged)
     Q_PROPERTY(float locatorScale READ locatorScale WRITE setLocatorScale NOTIFY locatorScaleChanged)
     Q_PROPERTY(QQmlListProperty<abcentity::CameraLocatorEntity> cameras READ cameras NOTIFY camerasChanged)
@@ -77,6 +78,7 @@ public:
     Q_SIGNAL void locatorScaleChanged();
     Q_SIGNAL void objectPicked(Qt3DCore::QTransform* transform);
     Q_SIGNAL void statusChanged(Status status);
+    Q_SIGNAL void skipHiddenChanged();
 
 protected:
     /// Scale child locators
@@ -87,6 +89,7 @@ protected:
 private:
     Status _status = AlembicEntity::None;
     QUrl _source;
+    bool _skipHidden = false;
     float _pointSize = 0.5f;
     float _locatorScale = 1.0f;
     Qt3DRender::QParameter* _pointSizeParameter;
