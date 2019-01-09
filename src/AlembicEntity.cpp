@@ -41,6 +41,7 @@ void AlembicEntity::setPointSize(const float& value)
         return;
     _pointSize = value;
     _pointSizeParameter->setValue(value);
+    _cloudMaterial->setEnabled(_pointSize > 0.0f);
     Q_EMIT pointSizeChanged();
 }
 
