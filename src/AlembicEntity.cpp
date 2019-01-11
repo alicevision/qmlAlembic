@@ -1,4 +1,5 @@
 #include "AlembicEntity.hpp"
+#include "IOThread.hpp"
 #include "CameraLocatorEntity.hpp"
 #include "PointCloudEntity.hpp"
 #include <Qt3DRender/QEffect>
@@ -8,35 +9,40 @@
 #include <Qt3DRender/QObjectPicker>
 #include <Qt3DRender/QPickEvent>
 #include <Qt3DExtras/QPerVertexColorMaterial>
-#include <QUrl>
 #include <QFile>
+
+using namespace Alembic::Abc;
+using namespace Alembic::AbcGeom;
 
 namespace abcentity
 {
 
 AlembicEntity::AlembicEntity(Qt3DCore::QNode* parent)
     : Qt3DCore::QEntity(parent)
-    , _particleSizeParameter(new Qt3DRender::QParameter)
+    , _ioThread(new IOThread())
+    , _pointSizeParameter(new Qt3DRender::QParameter)
 {
+    connect(_ioThread.get(), &IOThread::finished, this, &AlembicEntity::onIOThreadFinished);
     createMaterials();
 }
 
-void AlembicEntity::setUrl(const QUrl& value)
+void AlembicEntity::setSource(const QUrl& value)
 {
-    if(_url == value)
+    if(_source == value)
         return;
-    _url = value;
+    _source = value;
     loadAbcArchive();
-    Q_EMIT urlChanged();
+    Q_EMIT sourceChanged();
 }
 
-void AlembicEntity::setParticleSize(const float& value)
+void AlembicEntity::setPointSize(const float& value)
 {
-    if(_particleSize == value)
+    if(_pointSize == value)
         return;
-    _particleSize = value;
-    _particleSizeParameter->setValue(value);
-    Q_EMIT particleSizeChanged();
+    _pointSize = value;
+    _pointSizeParameter->setValue(value);
+    _cloudMaterial->setEnabled(_pointSize > 0.0f);
+    Q_EMIT pointSizeChanged();
 }
 
 void AlembicEntity::setLocatorScale(const float& value)
@@ -72,21 +78,24 @@ void AlembicEntity::createMaterials()
     QRenderPass* renderPass = new QRenderPass;
     QShaderProgram* shaderProgram = new QShaderProgram;
 
-    // set vertex shader
-    shaderProgram->setVertexShaderCode(R"(#version 330 core
-        uniform mat4 modelViewProjection;
-        in vec3 vertexPosition;
-        in vec3 vertexColor;
-        out vec3 colors;
-        void main(void)
-        {
-            gl_Position = modelViewProjection * vec4(vertexPosition, 1.0f);
-            colors = vertexColor;
-        }
+    shaderProgram->setVertexShaderCode(R"(#version 130
+    in vec3 vertexPosition;
+    in vec3 vertexColor;
+    out vec3 color;
+    uniform mat4 mvp;
+    uniform mat4 projectionMatrix;
+    uniform mat4 viewportMatrix;
+    uniform float pointSize;
+    void main()
+    {
+        color = vertexColor;
+        gl_Position = mvp * vec4(vertexPosition, 1.0);
+        gl_PointSize = max(viewportMatrix[1][1] * projectionMatrix[1][1] * pointSize / gl_Position.w, 1.0);
+    }
     )");
 
     // set fragment shader
-    shaderProgram->setFragmentShaderCode(R"(#version 330 core
+    shaderProgram->setFragmentShaderCode(R"(#version 130
         in vec3 color;
         out vec4 fragColor;
         void main(void)
@@ -95,36 +104,10 @@ void AlembicEntity::createMaterials()
         }
     )");
 
-    // set geometry shader
-    shaderProgram->setGeometryShaderCode(R"(#version 330
-        layout(points) in;
-        layout(triangle_strip) out;
-        layout(max_vertices = 4) out;
-        uniform mat4 projectionMatrix;
-        uniform float particleSize;
-        in vec3 colors[];
-        out vec3 color;
-        void main(void)
-        {
-            vec4 right = vec4(0, particleSize, 0, 0);
-            vec4 up = vec4(particleSize, 0, 0, 0);
-            color = colors[0];
-            gl_Position = gl_in[0].gl_Position - projectionMatrix*(right + up);
-            EmitVertex();
-            gl_Position = gl_in[0].gl_Position - projectionMatrix*(right - up);
-            EmitVertex();
-            gl_Position = gl_in[0].gl_Position + projectionMatrix*(right - up);
-            EmitVertex();
-            gl_Position = gl_in[0].gl_Position + projectionMatrix*(right + up);
-            EmitVertex();
-            EndPrimitive();
-        }
-    )");
-
-    // add a particleSize uniform
-    _particleSizeParameter->setName("particleSize");
-    _particleSizeParameter->setValue(_particleSize);
-    _cloudMaterial->addParameter(_particleSizeParameter);
+    // add a pointSize uniform
+    _pointSizeParameter->setName("pointSize");
+    _pointSizeParameter->setValue(_pointSize);
+    _cloudMaterial->addParameter(_pointSizeParameter);
 
     // build the material
     renderPass->setShaderProgram(shaderProgram);
@@ -145,57 +128,52 @@ void AlembicEntity::clear()
     for(auto& component : components())
         removeComponent(component);
     _cameras.clear();
+    _pointClouds.clear();
 }
 
 // private
 void AlembicEntity::loadAbcArchive()
 {
     clear();
-
-    // ensure file exists and is valid
-    if(!_url.isValid() || !QFile::exists(_url.toLocalFile()))
-        return;
-
-    using namespace Qt3DRender;
-    using namespace Alembic::Abc;
-    using namespace Alembic::AbcGeom;
-
-    // load the abc archive
-    Alembic::AbcCoreFactory::IFactory factory;
-    Alembic::AbcCoreFactory::IFactory::CoreType coreType;
-    Abc::IArchive archive = factory.getArchive(_url.toLocalFile().toStdString(), coreType);
-    if(!archive.valid())
-        return;
-
-    // visit the abc tree
-    visitAbcObject(archive.getTop(), this);
-
-    // store pointers to cameras
-    _cameras = findChildren<CameraLocatorEntity*>();
-
-    // scale locators
-    scaleLocators();
-
-    auto onPicked = [&](QPickEvent* pick)
+    if(_source.isEmpty())
     {
-        auto picker = (QObjectPicker*)sender();
-        for(auto e : picker->entities())
-        {
-            for(auto c : e->components())
-            {
-                if(c->isEnabled() && c->inherits("Qt3DCore::QTransform"))
-                {
-                    Q_EMIT objectPicked(qobject_cast<Qt3DCore::QTransform*>(c));
-                    break;
-                }
-            }
-        }
-    };
+        setStatus(AlembicEntity::None);
+        return;
+    }
+    setStatus(AlembicEntity::Loading);
+    _ioThread->read(_source);
+}
 
-    for(auto picker : findChildren<QObjectPicker*>())
-        QObject::connect(picker, &QObjectPicker::clicked, this, onPicked);
+void AlembicEntity::onIOThreadFinished()
+{   
+    const auto& archive = _ioThread->archive();
+    if(!archive.valid())
+    {
+        setStatus(AlembicEntity::Error);
+        return;
+    }
+    // visit the abc tree
+    try 
+    {
+        visitAbcObject(archive.getTop(), this);
 
+        // store pointers to cameras and point clouds
+        _cameras = findChildren<CameraLocatorEntity*>();
+        _pointClouds = findChildren<PointCloudEntity*>();
+
+        // perform initial locator scaling
+        scaleLocators();
+
+        setStatus(AlembicEntity::Ready);
+    }
+    catch(...)
+    {
+        clear();
+        setStatus(AlembicEntity::Error);
+    }
+    _ioThread->clear();
     Q_EMIT camerasChanged();
+    Q_EMIT pointCloudsChanged();
 }
 
 // private
@@ -243,6 +221,19 @@ void AlembicEntity::visitAbcObject(const Alembic::Abc::IObject& iObj, QEntity* p
             return new BaseAlembicObject(parent);
         }
     };
+
+    if(_skipHidden)
+    {
+        // Skip objects with visibilityProperty explicitly set to hidden
+        const auto& prop = iObj.getProperties();
+
+        if(prop.getPropertyHeader(kVisibilityPropertyName))
+        {
+            IVisibilityProperty visibilityProperty(prop, kVisibilityPropertyName);
+            if(ObjectVisibility(visibilityProperty.getValue()) == kVisibilityHidden)
+                return;
+        }
+    }
 
     BaseAlembicObject* entity = createEntity(iObj);
     entity->setObjectName(iObj.getName().c_str());
