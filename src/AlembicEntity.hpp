@@ -37,8 +37,8 @@ public:
     };
     Q_ENUM(Status)
 
-    AlembicEntity(Qt3DCore::QNode* = nullptr);
     ~AlembicEntity() = default;
+    explicit AlembicEntity(Qt3DCore::QNode* = nullptr);
 
     Q_SLOT const QUrl& source() const { return _source; }
     Q_SLOT float pointSize() const { return _pointSize; }
