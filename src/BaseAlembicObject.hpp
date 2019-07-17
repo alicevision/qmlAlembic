@@ -19,8 +19,8 @@ class BaseAlembicObject : public Qt3DCore::QEntity
 
 public:
 
-    ~BaseAlembicObject() = default;
     explicit BaseAlembicObject(Qt3DCore::QNode* = nullptr);
+    ~BaseAlembicObject() override = default;
 
     void setTransform(const Alembic::Abc::M44d&);
 

@@ -11,8 +11,8 @@ class PointCloudEntity : public BaseAlembicObject
     Q_OBJECT
 
 public:
-    ~PointCloudEntity() = default;
     explicit PointCloudEntity(Qt3DCore::QNode* = nullptr);
+    ~PointCloudEntity() override = default;
 
 public:
     void setData(const Alembic::Abc::IObject&);
