@@ -73,10 +73,10 @@ void AlembicEntity::createMaterials()
     _cameraMaterial = new QPerVertexColorMaterial(this);
 
     // configure cloud material
-    QEffect* effect = new QEffect;
-    QTechnique* technique = new QTechnique;
-    QRenderPass* renderPass = new QRenderPass;
-    QShaderProgram* shaderProgram = new QShaderProgram;
+    auto effect = new QEffect;
+    auto technique = new QTechnique;
+    auto renderPass = new QRenderPass;
+    auto shaderProgram = new QShaderProgram;
 
     shaderProgram->setVertexShaderCode(R"(#version 130
     in vec3 vertexPosition;

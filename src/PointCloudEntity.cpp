@@ -19,8 +19,8 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     using namespace Alembic::AbcGeom;
 
     // create a new geometry renderer
-    QGeometryRenderer* customMeshRenderer = new QGeometryRenderer;
-    QGeometry* customGeometry = new QGeometry;
+    auto customMeshRenderer = new QGeometryRenderer;
+    auto customGeometry = new QGeometry;
 
     // read position data
     IPoints points(iObj, kWrapExisting);
@@ -30,9 +30,9 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
 
     // vertices buffer
     QByteArray positionData((const char*)positions->get(), npoints * 3 * sizeof(float));
-    QBuffer* vertexDataBuffer = new QBuffer(QBuffer::VertexBuffer);
+    auto vertexDataBuffer = new QBuffer(QBuffer::VertexBuffer);
     vertexDataBuffer->setData(positionData);
-    QAttribute* positionAttribute = new QAttribute;
+    auto positionAttribute = new QAttribute;
     positionAttribute->setAttributeType(QAttribute::VertexAttribute);
     positionAttribute->setBuffer(vertexDataBuffer);
     positionAttribute->setDataType(QAttribute::Float);
@@ -45,7 +45,7 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     customGeometry->setBoundingVolumePositionAttribute(positionAttribute);
 
     // read color data
-    QBuffer* colorDataBuffer = new QBuffer(QBuffer::VertexBuffer);
+    auto colorDataBuffer = new QBuffer(QBuffer::VertexBuffer);
 
     // check if we have a color property
     ICompoundProperty cProp = schema.getArbGeomParams();
@@ -77,7 +77,7 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     // if needed, fill the buffer with a default color
     if(colorDataBuffer->data().isEmpty())
     {
-        float* colors = new float[positions->size() * 3];
+        auto colors = new float[positions->size() * 3];
         for(int i = 0; i < positions->size() * 3; i++)
             colors[i] = 0.8f;
         QByteArray colorData((const char*)colors, npoints * 3 * sizeof(float));
@@ -85,7 +85,7 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     }
 
     // colors buffer
-    QAttribute* colorAttribute = new QAttribute;
+    auto colorAttribute = new QAttribute;
     colorAttribute->setAttributeType(QAttribute::VertexAttribute);
     colorAttribute->setBuffer(colorDataBuffer);
     colorAttribute->setDataType(QAttribute::Float);

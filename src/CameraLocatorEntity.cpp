@@ -14,8 +14,8 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     using namespace Qt3DRender;
 
     // create a new geometry renderer
-    QGeometryRenderer* customMeshRenderer = new QGeometryRenderer;
-    QGeometry* customGeometry = new QGeometry;
+    auto customMeshRenderer = new QGeometryRenderer;
+    auto customGeometry = new QGeometry;
 
     // vertices buffer
     QVector<float> points{0.f,  0.f,  0.f,  0.5f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.5f,
@@ -25,9 +25,9 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
                           -0.3f, -0.3f, -0.2f, -0.3f, -0.3f, -0.2f, -0.3f, 0.3f,  -0.2f, -0.3f, 0.3f,
                           -0.2f, -0.3f, 0.3f,  0.2f,  -0.3f, 0.3f,  0.2f,  -0.3f, -0.3f, 0.2f,  -0.3f};
     QByteArray positionData((const char*)points.data(), points.size() * sizeof(float));
-    QBuffer* vertexDataBuffer = new QBuffer(QBuffer::VertexBuffer);
+    auto vertexDataBuffer = new QBuffer(QBuffer::VertexBuffer);
     vertexDataBuffer->setData(positionData);
-    QAttribute* positionAttribute = new QAttribute;
+    auto positionAttribute = new QAttribute;
     positionAttribute->setAttributeType(QAttribute::VertexAttribute);
     positionAttribute->setBuffer(vertexDataBuffer);
     positionAttribute->setDataType(QAttribute::Float);
@@ -45,9 +45,9 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
                           1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
                           1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
     QByteArray colorData((const char*)colors.data(), colors.size() * sizeof(float));
-    QBuffer* colorDataBuffer = new QBuffer(QBuffer::VertexBuffer);
+    auto colorDataBuffer = new QBuffer(QBuffer::VertexBuffer);
     colorDataBuffer->setData(colorData);
-    QAttribute* colorAttribute = new QAttribute;
+    auto colorAttribute = new QAttribute;
     colorAttribute->setAttributeType(QAttribute::VertexAttribute);
     colorAttribute->setBuffer(colorDataBuffer);
     colorAttribute->setDataType(QAttribute::Float);
