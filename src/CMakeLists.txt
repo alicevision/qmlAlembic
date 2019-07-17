@@ -1,8 +1,9 @@
 # Target srcs
-file(GLOB_RECURSE TARGET_SRCS *.cpp *.cxx *.cc *.C *.c *.h *.hpp)
+set(PLUGIN_SOURCES AlembicEntity.cpp BaseAlembicObject.cpp CameraLocatorEntity.cpp IOThread.cpp PointCloudEntity.cpp)
+set(PLUGIN_HEADERS AlembicEntity.hpp BaseAlembicObject.hpp CameraLocatorEntity.hpp IOThread.hpp PointCloudEntity.hpp plugin.hpp)
 
 # Target properties
-add_library(alembicEntityQmlPlugin SHARED ${TARGET_SRCS})
+add_library(alembicEntityQmlPlugin SHARED ${PLUGIN_SOURCES} ${PLUGIN_HEADERS})
 
 target_link_libraries(alembicEntityQmlPlugin
   PUBLIC
