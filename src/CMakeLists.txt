@@ -1,8 +1,9 @@
 # Target srcs
-file(GLOB_RECURSE TARGET_SRCS *.cpp *.cxx *.cc *.C *.c *.h *.hpp)
+set(PLUGIN_SOURCES AlembicEntity.cpp BaseAlembicObject.cpp CameraLocatorEntity.cpp IOThread.cpp PointCloudEntity.cpp)
+set(PLUGIN_HEADERS AlembicEntity.hpp BaseAlembicObject.hpp CameraLocatorEntity.hpp IOThread.hpp PointCloudEntity.hpp plugin.hpp)
 
 # Target properties
-add_library(alembicEntityQmlPlugin SHARED ${TARGET_SRCS})
+add_library(alembicEntityQmlPlugin SHARED ${PLUGIN_SOURCES} ${PLUGIN_HEADERS})
 
 target_link_libraries(alembicEntityQmlPlugin
   PUBLIC
@@ -15,11 +16,14 @@ target_link_libraries(alembicEntityQmlPlugin
     Qt5::3DExtras
 )
 
-# CMake Find modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set_target_properties(alembicEntityQmlPlugin
+        PROPERTIES
+        DEBUG_POSTFIX "d"
+        FOLDER "alembicEntityQmlPlugin"
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+        VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+        )
 
-# Add missing include path to IlmBase/OpenEXR include folder
-find_package(IlmBase REQUIRED)
 target_include_directories(alembicEntityQmlPlugin PUBLIC ${ILMBASE_INCLUDE_DIR})
 
 # Install settings

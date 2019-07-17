@@ -37,8 +37,8 @@ public:
     };
     Q_ENUM(Status)
 
-    AlembicEntity(Qt3DCore::QNode* = nullptr);
-    ~AlembicEntity() = default;
+    explicit AlembicEntity(Qt3DCore::QNode* = nullptr);
+    ~AlembicEntity() override = default;
 
     Q_SLOT const QUrl& source() const { return _source; }
     Q_SLOT float pointSize() const { return _pointSize; }
@@ -63,11 +63,11 @@ private:
     void visitAbcObject(const Alembic::Abc::IObject&, QEntity* parent);
 
     QQmlListProperty<CameraLocatorEntity> cameras() {
-        return QQmlListProperty<CameraLocatorEntity>(this, _cameras);
+        return {this, _cameras};
     }
 
     QQmlListProperty<PointCloudEntity> pointClouds() {
-        return QQmlListProperty<PointCloudEntity>(this, _pointClouds);
+        return {this, _pointClouds};
     }
 
 public:

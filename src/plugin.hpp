@@ -19,9 +19,9 @@ public:
         Q_ASSERT(uri == QLatin1String("AlembicEntity"));
         qmlRegisterType<AlembicEntity>(uri, 2, 0, "AlembicEntity");
         qmlRegisterUncreatableType<CameraLocatorEntity>(uri, 2, 0, "CameraLocatorEntity",
-                                                        "Can't create CameraLocatorEntity intances from QML.");
+                                                        "Cannot create CameraLocatorEntity instances from QML.");
         qmlRegisterUncreatableType<PointCloudEntity>(uri, 2, 0, "PointCloudEntity",
-                                                        "Can't create PointCloudEntity intances from QML.");
+                                                        "Cannot create PointCloudEntity instances from QML.");
     }
 };
 
