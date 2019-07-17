@@ -16,6 +16,13 @@ target_link_libraries(alembicEntityQmlPlugin
     Qt5::3DExtras
 )
 
+set_target_properties(alembicEntityQmlPlugin
+        PROPERTIES
+        DEBUG_POSTFIX "d"
+        FOLDER "alembicEntityQmlPlugin"
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+        VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+        )
 
 target_include_directories(alembicEntityQmlPlugin PUBLIC ${ILMBASE_INCLUDE_DIR})
 
