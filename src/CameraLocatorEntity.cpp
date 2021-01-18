@@ -18,12 +18,28 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     auto customGeometry = new QGeometry;
 
     // vertices buffer
-    QVector<float> points{0.f,  0.f,  0.f,  0.5f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.5f,
-                          0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.5f,  0.f,  0.f,  0.f,  -0.3f,
-                          0.2f,  -0.3f, 0.f,  0.f,  0.f,  -0.3f, -0.2f, -0.3f, 0.f,  0.f,  0.f,
-                          0.3f,  -0.2f, -0.3f, 0.f,  0.f,  0.f,  0.3f,  0.2f,  -0.3f, -0.3f, 0.2f,
-                          -0.3f, -0.3f, -0.2f, -0.3f, -0.3f, -0.2f, -0.3f, 0.3f,  -0.2f, -0.3f, 0.3f,
-                          -0.2f, -0.3f, 0.3f,  0.2f,  -0.3f, 0.3f,  0.2f,  -0.3f, -0.3f, 0.2f,  -0.3f};
+    QVector<float> points {
+        // Coord system
+        0.f,  0.f,  0.f,  0.5f,  0.0f,  0.0f, // X
+        0.f,  0.f,  0.f,  0.0f,  0.5f,  0.0f, // Y
+        0.f,  0.f,  0.f,  0.0f,  0.0f,  0.5f, // Z
+
+        // Pyramid
+        0.f,  0.f,  0.f,  -0.3f, 0.2f,  -0.3f, // TL
+        0.f,  0.f,  0.f,  -0.3f, -0.2f, -0.3f, // BL
+        0.f,  0.f,  0.f,   0.3f, -0.2f, -0.3f, // BR
+        0.f,  0.f,  0.f,   0.3f,  0.2f, -0.3f, // TR
+
+        // Image plane
+        -0.3f,  0.2f, -0.3f,  -0.3f, -0.2f, -0.3f, // L
+        -0.3f, -0.2f, -0.3f,   0.3f, -0.2f, -0.3f, // B
+         0.3f, -0.2f, -0.3f,   0.3f,  0.2f, -0.3f, // R
+         0.3f,  0.2f, -0.3f,  -0.3f,  0.2f, -0.3f, // T
+
+        // Camera Up
+        -0.3f,  0.2f, -0.3f,  0.0f,  0.25f, -0.3f, // L
+         0.3f,  0.2f, -0.3f,  0.0f,  0.25f, -0.3f, // R
+        };
     QByteArray positionData((const char*)points.data(), points.size() * sizeof(float));
     auto vertexDataBuffer = new QBuffer(QBuffer::VertexBuffer);
     vertexDataBuffer->setData(positionData);
@@ -39,11 +55,26 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     customGeometry->addAttribute(positionAttribute);
 
     // colors buffer
-    QVector<float> colors{1.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f,
-                          1.f, 0.f, 0.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
-                          1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
-                          1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
-                          1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
+    QVector<float> colors {
+        // Coord system
+        1.f, 0.f, 0.f, 1.f, 0.f, 0.f, // R
+        0.f, 1.f, 0.f, 0.f, 1.f, 0.f, // G
+        0.f, 0.f, 1.f, 0.f, 0.f, 1.f, // B
+        // Pyramid
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        // Image Plane
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        // Camera Up direction
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        1.f, 1.f, 1.f, 1.f, 1.f, 1.f,
+        };
+
     QByteArray colorData((const char*)colors.data(), colors.size() * sizeof(float));
     auto colorDataBuffer = new QBuffer(QBuffer::VertexBuffer);
     colorDataBuffer->setData(colorData);
