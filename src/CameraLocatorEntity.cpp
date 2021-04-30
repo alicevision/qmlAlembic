@@ -21,20 +21,20 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     QVector<float> points {
         // Coord system
         0.f,  0.f,  0.f,  0.5f,  0.0f,  0.0f, // X
-        0.f,  0.f,  0.f,  0.0f,  0.5f,  0.0f, // Y
-        0.f,  0.f,  0.f,  0.0f,  0.0f,  0.5f, // Z
+        0.f,  0.f,  0.f,  0.0f,  -0.5f,  0.0f, // Y
+        0.f,  0.f,  0.f,  0.0f,  0.0f,  -0.5f, // Z
 
         // Pyramid
         0.f,  0.f,  0.f,  -0.3f, 0.2f,  -0.3f, // TL
-        0.f,  0.f,  0.f,  -0.3f, -0.2f, -0.3f, // BL
+        0.f,  0.f,  0.f,  -0.3f, 0.2f, -0.3f, // BL
         0.f,  0.f,  0.f,   0.3f, -0.2f, -0.3f, // BR
-        0.f,  0.f,  0.f,   0.3f,  0.2f, -0.3f, // TR
+        0.f,  0.f,  0.f,   0.3f,  -0.2f, -0.3f, // TR
 
         // Image plane
-        -0.3f,  0.2f, -0.3f,  -0.3f, -0.2f, -0.3f, // L
-        -0.3f, -0.2f, -0.3f,   0.3f, -0.2f, -0.3f, // B
-         0.3f, -0.2f, -0.3f,   0.3f,  0.2f, -0.3f, // R
-         0.3f,  0.2f, -0.3f,  -0.3f,  0.2f, -0.3f, // T
+        -0.3f, -0.2f, -0.3f,  -0.3f, 0.2f, -0.3f, // L
+        -0.3f, 0.2f, -0.3f,   0.3f, 0.2f, -0.3f, // B
+         0.3f, 0.2f, -0.3f,   0.3f,  -0.2f, -0.3f, // R
+         0.3f,  -0.2f, -0.3f,  -0.3f,  -0.2f, -0.3f, // T
 
         // Camera Up
         -0.3f,  0.2f, -0.3f,  0.0f,  0.25f, -0.3f, // L
