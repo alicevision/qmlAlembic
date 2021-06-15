@@ -28,4 +28,4 @@ find_package(Alembic 1.7 REQUIRED)
 # Add missing include path to IlmBase/OpenEXR include folder
 find_package(IlmBase REQUIRED)
 
-add_subdirectory(src)
+add_subdirectory(src/qmlAlembic)
