@@ -98,6 +98,7 @@ private:
     QList<CameraLocatorEntity*> _cameras;
     QList<PointCloudEntity*> _pointClouds;
     std::unique_ptr<IOThread> _ioThread;
+    bool _oldFrames = false;
 };
 
 } // namespace

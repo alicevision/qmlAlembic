@@ -157,6 +157,29 @@ void AlembicEntity::onIOThreadFinished()
     {
         visitAbcObject(archive.getTop(), this);
 
+        //Read abc version
+        std::vector<::uint32_t> abcVersion = {0, 0, 0};
+        IObject rootObj = archive.getTop().getChild("mvgRoot");
+        ICompoundProperty userProps = rootObj.getProperties();
+        if (const Alembic::Abc::PropertyHeader* propHeader = userProps.getPropertyHeader("mvg_ABC_version"))
+        {
+            const index_t sampleFrame = 0;
+            Alembic::Abc::IUInt32ArrayProperty prop(userProps, "mvg_ABC_version");
+            Alembic::Abc::IUInt32ArrayProperty::sample_ptr_type sample;
+            prop.get(sample, ISampleSelector(sampleFrame));
+            abcVersion.assign(sample->get(), sample->get()+sample->size());
+        }   
+
+        long version = abcVersion[2] + abcVersion[1] * 100 + abcVersion[0] * 10000;
+        if (version < 10203)
+        {
+            _oldFrames = true;
+        }
+        else 
+        {
+            _oldFrames = false;
+        }
+
         // store pointers to cameras and point clouds
         _cameras = findChildren<CameraLocatorEntity*>();
         _pointClouds = findChildren<PointCloudEntity*>();
@@ -209,7 +232,7 @@ void AlembicEntity::visitAbcObject(const Alembic::Abc::IObject& iObj, QEntity* p
         else if(ICamera::matches(md))
         {
             ICamera cam(iObj, Alembic::Abc::kWrapExisting);
-            CameraLocatorEntity* entity = new CameraLocatorEntity(parent);
+            CameraLocatorEntity* entity = new CameraLocatorEntity(parent, _oldFrames);
             entity->addComponent(_cameraMaterial);
             entity->fillArbProperties(cam.getSchema().getArbGeomParams());
             entity->fillUserProperties(cam.getSchema().getUserProperties());
