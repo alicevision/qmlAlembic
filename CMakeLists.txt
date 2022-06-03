@@ -4,9 +4,6 @@ project(alembicEntityQmlPlugin LANGUAGES CXX VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# CMake Find modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 # Qt dependency
 if(POLICY CMP0043)
     cmake_policy(SET CMP0043 OLD)
@@ -24,8 +21,5 @@ add_definitions(-DQT_NO_KEYWORDS)
 
 # Alembic dependency
 find_package(Alembic 1.7 REQUIRED)
-
-# Add missing include path to IlmBase/OpenEXR include folder
-find_package(IlmBase REQUIRED)
 
 add_subdirectory(src)
