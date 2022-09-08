@@ -55,9 +55,9 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent, bool oldVersio
 
             // Pyramid
             0.f,  0.f,  0.f,  -0.3f, 0.2f,  -0.3f, // TL
-            0.f,  0.f,  0.f,  -0.3f, 0.2f, -0.3f, // BL
+            0.f,  0.f,  0.f,  -0.3f, -0.2f, -0.3f, // BL
             0.f,  0.f,  0.f,   0.3f, -0.2f, -0.3f, // BR
-            0.f,  0.f,  0.f,   0.3f,  -0.2f, -0.3f, // TR
+            0.f,  0.f,  0.f,   0.3f,  0.2f, -0.3f, // TR
 
             // Image plane
             -0.3f, -0.2f, -0.3f,  -0.3f, 0.2f, -0.3f, // L
