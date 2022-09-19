@@ -1,7 +1,7 @@
 #include "PointCloudEntity.hpp"
-#include <Qt3DRender/QGeometryRenderer>
-#include <Qt3DRender/QAttribute>
-#include <Qt3DRender/QBuffer>
+#include <QGeometryRenderer>
+#include <Qt3DCore/QAttribute>
+#include <Qt3DCore/QBuffer>
 #include <Qt3DCore/QTransform>
 
 namespace abcentity
@@ -14,6 +14,7 @@ PointCloudEntity::PointCloudEntity(Qt3DCore::QNode* parent)
 
 void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
 {
+    using namespace Qt3DCore;
     using namespace Qt3DRender;
     using namespace Alembic::Abc;
     using namespace Alembic::AbcGeom;
@@ -30,13 +31,13 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
 
     // vertices buffer
     QByteArray positionData((const char*)positions->get(), npoints * 3 * sizeof(float));
-    auto vertexDataBuffer = new QBuffer(QBuffer::VertexBuffer);
+    auto vertexDataBuffer = new QBuffer();
     vertexDataBuffer->setData(positionData);
     auto positionAttribute = new QAttribute;
     positionAttribute->setAttributeType(QAttribute::VertexAttribute);
     positionAttribute->setBuffer(vertexDataBuffer);
-    positionAttribute->setDataType(QAttribute::Float);
-    positionAttribute->setDataSize(3);
+    positionAttribute->setVertexBaseType(QAttribute::Float);
+    positionAttribute->setVertexSize(3);
     positionAttribute->setByteOffset(0);
     positionAttribute->setByteStride(3 * sizeof(float));
     positionAttribute->setCount(npoints);
@@ -45,7 +46,7 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     customGeometry->setBoundingVolumePositionAttribute(positionAttribute);
 
     // read color data
-    auto colorDataBuffer = new QBuffer(QBuffer::VertexBuffer);
+    auto colorDataBuffer = new QBuffer();
 
     // check if we have a color property
     ICompoundProperty cProp = schema.getArbGeomParams();
@@ -88,8 +89,8 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     auto colorAttribute = new QAttribute;
     colorAttribute->setAttributeType(QAttribute::VertexAttribute);
     colorAttribute->setBuffer(colorDataBuffer);
-    colorAttribute->setDataType(QAttribute::Float);
-    colorAttribute->setDataSize(3);
+    colorAttribute->setVertexBaseType(QAttribute::Float);
+    colorAttribute->setVertexSize(3);
     colorAttribute->setByteOffset(0);
     colorAttribute->setByteStride(3 * sizeof(float));
     colorAttribute->setCount(npoints);

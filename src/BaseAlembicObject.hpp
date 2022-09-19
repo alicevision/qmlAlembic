@@ -3,6 +3,7 @@
 #include <QEntity>
 #include <Qt3DCore/QTransform>
 #include <Alembic/AbcGeom/All.h>
+#include <QVariant>
 
 namespace abcentity
 {

@@ -7,13 +7,13 @@ add_library(alembicEntityQmlPlugin SHARED ${PLUGIN_SOURCES} ${PLUGIN_HEADERS})
 
 target_link_libraries(alembicEntityQmlPlugin
   PUBLIC
-    Qt5::Core
-    Qt5::Qml
-    Qt5::3DCore
-    Qt5::3DRender
+    Qt6::Core
+    Qt6::Qml
+    Qt6::3DCore
+    Qt6::3DRender
     Alembic::Alembic
   PRIVATE
-    Qt5::3DExtras
+    Qt6::3DExtras
 )
 
 set_target_properties(alembicEntityQmlPlugin

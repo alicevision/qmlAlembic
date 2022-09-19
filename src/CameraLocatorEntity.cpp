@@ -1,8 +1,8 @@
 #include "CameraLocatorEntity.hpp"
-#include <Qt3DRender/QGeometryRenderer>
-#include <Qt3DRender/QAttribute>
-#include <Qt3DRender/QBuffer>
-#include <Qt3DRender/QObjectPicker>
+#include <QGeometryRenderer>
+#include <Qt3DCore/QAttribute>
+#include <Qt3DCore/QBuffer>
+#include <QObjectPicker>
 #include <Qt3DCore/QTransform>
 
 namespace abcentity
@@ -12,6 +12,7 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     : BaseAlembicObject(parent)
 {
     using namespace Qt3DRender;
+    using namespace Qt3DCore;
 
     // create a new geometry renderer
     auto customMeshRenderer = new QGeometryRenderer;
@@ -43,13 +44,13 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
 
 
     QByteArray positionData((const char*)points.data(), points.size() * sizeof(float));
-    auto vertexDataBuffer = new QBuffer(QBuffer::VertexBuffer);
+    auto vertexDataBuffer = new QBuffer();
     vertexDataBuffer->setData(positionData);
     auto positionAttribute = new QAttribute;
     positionAttribute->setAttributeType(QAttribute::VertexAttribute);
     positionAttribute->setBuffer(vertexDataBuffer);
-    positionAttribute->setDataType(QAttribute::Float);
-    positionAttribute->setDataSize(3);
+    positionAttribute->setVertexBaseType(QAttribute::Float);
+    positionAttribute->setVertexSize(3);
     positionAttribute->setByteOffset(0);
     positionAttribute->setByteStride(3 * sizeof(float));
     positionAttribute->setCount(points.size() / 3);
@@ -78,13 +79,13 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
         };
 
     QByteArray colorData((const char*)colors.data(), colors.size() * sizeof(float));
-    auto colorDataBuffer = new QBuffer(QBuffer::VertexBuffer);
+    auto colorDataBuffer = new QBuffer();
     colorDataBuffer->setData(colorData);
     auto colorAttribute = new QAttribute;
     colorAttribute->setAttributeType(QAttribute::VertexAttribute);
     colorAttribute->setBuffer(colorDataBuffer);
-    colorAttribute->setDataType(QAttribute::Float);
-    colorAttribute->setDataSize(3);
+    colorAttribute->setVertexBaseType(QAttribute::Float);
+    colorAttribute->setVertexSize(3);
     colorAttribute->setByteOffset(0);
     colorAttribute->setByteStride(3 * sizeof(float));
     colorAttribute->setCount(colors.size() / 3);

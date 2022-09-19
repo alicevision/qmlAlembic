@@ -12,11 +12,11 @@ endif()
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Qml REQUIRED)
-find_package(Qt53DCore REQUIRED)
-find_package(Qt53DExtras REQUIRED)
-find_package(Qt53DRender REQUIRED)
+find_package(Qt6Core REQUIRED)
+find_package(Qt6Qml REQUIRED)
+find_package(Qt63DCore REQUIRED)
+find_package(Qt63DExtras REQUIRED)
+find_package(Qt63DRender REQUIRED)
 add_definitions(-DQT_NO_KEYWORDS)
 
 # Alembic dependency
