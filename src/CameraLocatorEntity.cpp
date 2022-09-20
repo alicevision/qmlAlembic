@@ -44,7 +44,7 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
 
 
     QByteArray positionData((const char*)points.data(), points.size() * sizeof(float));
-    auto vertexDataBuffer = new QBuffer();
+    auto vertexDataBuffer = new QBuffer;
     vertexDataBuffer->setData(positionData);
     auto positionAttribute = new QAttribute;
     positionAttribute->setAttributeType(QAttribute::VertexAttribute);
@@ -53,7 +53,7 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     positionAttribute->setVertexSize(3);
     positionAttribute->setByteOffset(0);
     positionAttribute->setByteStride(3 * sizeof(float));
-    positionAttribute->setCount(points.size() / 3);
+    positionAttribute->setCount((uint)(points.size() / 3));
     positionAttribute->setName(QAttribute::defaultPositionAttributeName());
     customGeometry->addAttribute(positionAttribute);
 
@@ -79,7 +79,7 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
         };
 
     QByteArray colorData((const char*)colors.data(), colors.size() * sizeof(float));
-    auto colorDataBuffer = new QBuffer();
+    auto colorDataBuffer = new QBuffer;
     colorDataBuffer->setData(colorData);
     auto colorAttribute = new QAttribute;
     colorAttribute->setAttributeType(QAttribute::VertexAttribute);
@@ -88,7 +88,7 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     colorAttribute->setVertexSize(3);
     colorAttribute->setByteOffset(0);
     colorAttribute->setByteStride(3 * sizeof(float));
-    colorAttribute->setCount(colors.size() / 3);
+    colorAttribute->setCount((uint)(colors.size() / 3));
     colorAttribute->setName(QAttribute::defaultColorAttributeName());
     customGeometry->addAttribute(colorAttribute);
 
@@ -98,7 +98,7 @@ CameraLocatorEntity::CameraLocatorEntity(Qt3DCore::QNode* parent)
     customMeshRenderer->setFirstInstance(0);
     customMeshRenderer->setPrimitiveType(QGeometryRenderer::Lines);
     customMeshRenderer->setGeometry(customGeometry);
-    customMeshRenderer->setVertexCount(points.size() / 3);
+    customMeshRenderer->setVertexCount((uint)(points.size() / 3));
 
     /*
     QCamera* camera = new QCamera(this);

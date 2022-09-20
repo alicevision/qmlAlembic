@@ -31,7 +31,7 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
 
     // vertices buffer
     QByteArray positionData((const char*)positions->get(), npoints * 3 * sizeof(float));
-    auto vertexDataBuffer = new QBuffer();
+    auto vertexDataBuffer = new QBuffer;
     vertexDataBuffer->setData(positionData);
     auto positionAttribute = new QAttribute;
     positionAttribute->setAttributeType(QAttribute::VertexAttribute);
@@ -40,13 +40,13 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     positionAttribute->setVertexSize(3);
     positionAttribute->setByteOffset(0);
     positionAttribute->setByteStride(3 * sizeof(float));
-    positionAttribute->setCount(npoints);
+    positionAttribute->setCount((uint)npoints);
     positionAttribute->setName(QAttribute::defaultPositionAttributeName());
     customGeometry->addAttribute(positionAttribute);
     customGeometry->setBoundingVolumePositionAttribute(positionAttribute);
 
     // read color data
-    auto colorDataBuffer = new QBuffer();
+    auto colorDataBuffer = new QBuffer;
 
     // check if we have a color property
     ICompoundProperty cProp = schema.getArbGeomParams();
@@ -93,7 +93,7 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     colorAttribute->setVertexSize(3);
     colorAttribute->setByteOffset(0);
     colorAttribute->setByteStride(3 * sizeof(float));
-    colorAttribute->setCount(npoints);
+    colorAttribute->setCount((uint)npoints);
     colorAttribute->setName(QAttribute::defaultColorAttributeName());
     customGeometry->addAttribute(colorAttribute);
 
@@ -103,7 +103,7 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     customMeshRenderer->setFirstInstance(0);
     customMeshRenderer->setPrimitiveType(QGeometryRenderer::Points);
     customMeshRenderer->setGeometry(customGeometry);
-    customMeshRenderer->setVertexCount(npoints);
+    customMeshRenderer->setVertexCount((uint)npoints);
 
     // add components
     addComponent(customMeshRenderer);
