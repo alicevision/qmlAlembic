@@ -2,14 +2,15 @@
 #include "IOThread.hpp"
 #include "CameraLocatorEntity.hpp"
 #include "PointCloudEntity.hpp"
+#include <QFile>
+#include <Qt3DExtras/QPerVertexColorMaterial>
 #include <Qt3DRender/QEffect>
-#include <Qt3DRender/QTechnique>
-#include <Qt3DRender/QRenderPass>
-#include <Qt3DRender/QShaderProgram>
+#include <Qt3DRender/QGraphicsApiFilter>
 #include <Qt3DRender/QObjectPicker>
 #include <Qt3DRender/QPickEvent>
-#include <Qt3DExtras/QPerVertexColorMaterial>
-#include <QFile>
+#include <Qt3DRender/QRenderPass>
+#include <Qt3DRender/QShaderProgram>
+#include <Qt3DRender/QTechnique>
 
 using namespace Alembic::Abc;
 using namespace Alembic::AbcGeom;
@@ -73,19 +74,53 @@ void AlembicEntity::createMaterials()
     _cameraMaterial = new QPerVertexColorMaterial(this);
 
     // configure cloud material
-    auto effect = new QEffect;
-    auto technique = new QTechnique;
-    auto renderPass = new QRenderPass;
-    auto shaderProgram = new QShaderProgram;
+    auto effect = new QEffect();
+    auto technique = new QTechnique();
+    auto renderPass = new QRenderPass();
+    auto shaderProgram = new QShaderProgram();
 
-    shaderProgram->setVertexShaderCode(R"(#version 130
-    in vec3 vertexPosition;
-    in vec3 vertexColor;
-    out vec3 color;
-    uniform mat4 mvp;
-    uniform mat4 projectionMatrix;
-    uniform mat4 viewportMatrix;
-    uniform float pointSize;
+    technique->graphicsApiFilter()->setApi(QGraphicsApiFilter::RHI);
+    technique->graphicsApiFilter()->setMajorVersion(1);
+    technique->graphicsApiFilter()->setMinorVersion(0);
+    technique->graphicsApiFilter()->setProfile(QGraphicsApiFilter::CoreProfile);
+
+    shaderProgram->setShaderCode(QShaderProgram::Vertex, R"(#version 450
+
+    layout(location = 0) in vec3 vertexPosition;
+    layout(location = 1) in vec3 vertexColor;
+    layout(location = 0) out vec3 color;
+
+    layout(std140, binding = 0) uniform qt3d_render_view_uniforms {
+        mat4 viewMatrix;
+        mat4 projectionMatrix;
+        mat4 uncorrectedProjectionMatrix;
+        mat4 clipCorrectionMatrix;
+        mat4 viewProjectionMatrix;
+        mat4 inverseViewMatrix;
+        mat4 inverseProjectionMatrix;
+        mat4 inverseViewProjectionMatrix;
+        mat4 viewportMatrix;
+        mat4 inverseViewportMatrix;
+        vec4 textureTransformMatrix;
+        vec3 eyePosition;
+        float aspectRatio;
+        float gamma;
+        float exposure;
+        float time;
+    };
+    layout(std140, binding = 1) uniform qt3d_command_uniforms {
+        mat4 modelMatrix;
+        mat4 inverseModelMatrix;
+        mat4 modelViewMatrix;
+        mat3 modelNormalMatrix;
+        mat4 inverseModelViewMatrix;
+        mat4 mvp;
+        mat4 inverseModelViewProjectionMatrix;
+    };
+    layout(std140, binding = 2) uniform custom_ubo {
+        float pointSize;
+    };
+
     void main()
     {
         color = vertexColor;
@@ -95,13 +130,15 @@ void AlembicEntity::createMaterials()
     )");
 
     // set fragment shader
-    shaderProgram->setFragmentShaderCode(R"(#version 130
-        in vec3 color;
-        out vec4 fragColor;
-        void main(void)
-        {
-            fragColor = vec4(color, 1.0);
-        }
+    shaderProgram->setShaderCode(QShaderProgram::Fragment, R"(#version 450
+
+    layout(location = 0) out vec4 fragColor;
+    layout(location = 0) in vec3 color;
+
+    void main()
+    {
+        fragColor = vec4(color, 1.0);
+    }
     )");
 
     // add a pointSize uniform
