@@ -38,12 +38,28 @@ void AlembicEntity::setSource(const QUrl& value)
 
 void AlembicEntity::setPointSize(const float& value)
 {
-    if(_pointSize == value)
-        return;
-    _pointSize = value;
-    _pointSizeParameter->setValue(value);
+    if (_fixedPointSize)
+    {
+        _pointSize = value;
+        _pointSizeParameter->setValue(0.005f);
+    }
+    else
+    {
+        _pointSize = value;
+        _pointSizeParameter->setValue(value);
+    }
     _cloudMaterial->setEnabled(_pointSize > 0.0f);
     Q_EMIT pointSizeChanged();
+}
+
+void AlembicEntity::setFixedPointSize(const bool& value)
+{
+    if (_fixedPointSize == value)
+        return;
+
+    _fixedPointSize = value;
+    setPointSize(_pointSize);
+    Q_EMIT fixedPointSizeChanged();
 }
 
 void AlembicEntity::setLocatorScale(const float& value)

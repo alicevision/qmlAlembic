@@ -21,6 +21,7 @@ class AlembicEntity : public Qt3DCore::QEntity
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(bool skipHidden MEMBER _skipHidden NOTIFY skipHiddenChanged)
     Q_PROPERTY(float pointSize READ pointSize WRITE setPointSize NOTIFY pointSizeChanged)
+    Q_PROPERTY(bool fixedPointSize READ fixedPointSize WRITE setFixedPointSize NOTIFY fixedPointSizeChanged)
     Q_PROPERTY(float locatorScale READ locatorScale WRITE setLocatorScale NOTIFY locatorScaleChanged)
     Q_PROPERTY(QQmlListProperty<abcentity::CameraLocatorEntity> cameras READ cameras NOTIFY camerasChanged)
     Q_PROPERTY(QQmlListProperty<abcentity::PointCloudEntity> pointClouds READ pointClouds NOTIFY pointCloudsChanged)
@@ -42,9 +43,11 @@ public:
 
     Q_SLOT const QUrl& source() const { return _source; }
     Q_SLOT float pointSize() const { return _pointSize; }
+    Q_SLOT bool fixedPointSize() const { return _fixedPointSize; }
     Q_SLOT float locatorScale() const { return _locatorScale; }
     Q_SLOT void setSource(const QUrl& source);
     Q_SLOT void setPointSize(const float& value);
+    Q_SLOT void setFixedPointSize(const bool& value);
     Q_SLOT void setLocatorScale(const float& value);
 
     Status status() const { return _status; }
@@ -74,6 +77,7 @@ public:
     Q_SIGNAL void sourceChanged();
     Q_SIGNAL void camerasChanged();
     Q_SIGNAL void pointSizeChanged();
+    Q_SIGNAL void fixedPointSizeChanged();
     Q_SIGNAL void pointCloudsChanged();
     Q_SIGNAL void locatorScaleChanged();
     Q_SIGNAL void objectPicked(Qt3DCore::QTransform* transform);
@@ -91,6 +95,7 @@ private:
     QUrl _source;
     bool _skipHidden = false;
     float _pointSize = 0.5f;
+    bool _fixedPointSize = false;
     float _locatorScale = 1.0f;
     Qt3DRender::QParameter* _pointSizeParameter;
     Qt3DRender::QMaterial* _cloudMaterial;
