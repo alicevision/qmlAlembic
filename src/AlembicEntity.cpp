@@ -145,7 +145,7 @@ void AlembicEntity::loadAbcArchive()
 }
 
 void AlembicEntity::onIOThreadFinished()
-{   
+{
     const auto& archive = _ioThread->archive();
     if(!archive.valid())
     {
@@ -153,7 +153,7 @@ void AlembicEntity::onIOThreadFinished()
         return;
     }
     // visit the abc tree
-    try 
+    try
     {
         visitAbcObject(archive.getTop(), this);
 
@@ -184,7 +184,7 @@ void AlembicEntity::visitAbcObject(const Alembic::Abc::IObject& iObj, QEntity* p
 
     const auto createEntity = [&](const IObject& iObject) -> BaseAlembicObject* {
         const MetaData& md = iObj.getMetaData();
-        
+
         if(IPoints::matches(md))
         {
             IPoints points(iObj, Alembic::Abc::kWrapExisting);

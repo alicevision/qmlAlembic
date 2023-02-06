@@ -7,7 +7,7 @@ BaseAlembicObject::BaseAlembicObject(Qt3DCore::QNode* parent)
     : Qt3DCore::QEntity(parent)
 {
     _transform = new Qt3DCore::QTransform;
-    addComponent(_transform);    
+    addComponent(_transform);
 }
 
 void BaseAlembicObject::fillArbProperties(const Alembic::Abc::ICompoundProperty &iParent)
@@ -81,7 +81,8 @@ void BaseAlembicObject::addArrayProperty<std::string>(QVariantMap& data, const A
 }
 
 template<typename PODTYPE>
-void BaseAlembicObject::addProperty(QVariantMap& data, const Alembic::Abc::ICompoundProperty& iParent, const Alembic::Abc::PropertyHeader& propHeader)
+void BaseAlembicObject::addProperty(QVariantMap& data, const Alembic::Abc::ICompoundProperty& iParent,
+                                    const Alembic::Abc::PropertyHeader& propHeader)
 {
     if(propHeader.isArray())
     {

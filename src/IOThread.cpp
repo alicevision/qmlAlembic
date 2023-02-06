@@ -26,7 +26,7 @@ void IOThread::clear()
 }
 
 const Alembic::Abc::IArchive& IOThread::archive() const
-{    
+{
     // mutex is mutable and can be locked in const methods
     QMutexLocker lock(&_mutex);
     return _archive;

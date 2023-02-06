@@ -12,7 +12,6 @@ class CameraLocatorEntity : public BaseAlembicObject
 public:
     explicit CameraLocatorEntity(Qt3DCore::QNode* = nullptr);
     ~CameraLocatorEntity() override = default;
-
 };
 
 } // namespace
