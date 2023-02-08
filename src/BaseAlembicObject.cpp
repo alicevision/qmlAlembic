@@ -57,7 +57,7 @@ void BaseAlembicObject::addArrayProperty(QVariantMap& data, const Alembic::Abc::
     prop.get(val);
     const PODTYPE* _data = static_cast<const PODTYPE*>(val->getData());
     QVariantList l;
-    l.reserve(val->size());
+    l.reserve(static_cast<int>(val->size()));
     for(size_t k=0; k < val->size(); k++)
     {
         l.append(_data[k]);
@@ -72,7 +72,7 @@ void BaseAlembicObject::addArrayProperty<std::string>(QVariantMap& data, const A
     prop.get(val);
     const std::string* _data = static_cast<const std::string*>(val->getData());
     QVariantList l;
-    l.reserve(val->size());
+    l.reserve(static_cast<int>(val->size()));
     for(size_t k=0; k < val->size(); k++)
     {
         l.append(QString::fromStdString(_data[k]));
@@ -143,6 +143,6 @@ void BaseAlembicObject::fillPropertyMap(const Alembic::Abc::ICompoundProperty& i
             break;
         }
     }
-};
+}
 
 }

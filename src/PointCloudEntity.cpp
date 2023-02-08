@@ -26,10 +26,10 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     IPoints points(iObj, kWrapExisting);
     IPointsSchema schema = points.getSchema();
     P3fArraySamplePtr positions = schema.getValue().getPositions();
-    size_t npoints = positions->size();
+    int npoints = static_cast<int>(positions->size());
 
     // vertices buffer
-    QByteArray positionData((const char*)positions->get(), npoints * 3 * sizeof(float));
+    QByteArray positionData((const char*)positions->get(), npoints * 3 * static_cast<int>(sizeof(float)));
     auto vertexDataBuffer = new QBuffer;
     vertexDataBuffer->setData(positionData);
     auto positionAttribute = new QAttribute;
@@ -39,7 +39,7 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     positionAttribute->setVertexSize(3);
     positionAttribute->setByteOffset(0);
     positionAttribute->setByteStride(3 * sizeof(float));
-    positionAttribute->setCount(npoints);
+    positionAttribute->setCount(static_cast<uint>(npoints));
     positionAttribute->setName(QAttribute::defaultPositionAttributeName());
     customGeometry->addAttribute(positionAttribute);
     customGeometry->setBoundingVolumePositionAttribute(positionAttribute);
@@ -62,11 +62,11 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
                 std::string interp = prop.getMetaData().get("interpretation");
                 if(interp == "rgb")
                 {
-                    Alembic::AbcCoreAbstract::DataType dType = prop.getDataType();
+                    // Alembic::AbcCoreAbstract::DataType dType = prop.getDataType();
                     Alembic::AbcCoreAbstract::ArraySamplePtr samp;
                     prop.get(samp);
                     QByteArray colorData((const char*)samp->getData(),
-                                         samp->size() * 3 * sizeof(float));
+                                         static_cast<int>(samp->size() * 3 * sizeof(float)));
                     colorDataBuffer->setData(colorData);
                     break; // set colors only once
                 }
@@ -78,9 +78,9 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     if(colorDataBuffer->data().isEmpty())
     {
         auto colors = new float[positions->size() * 3];
-        for(int i = 0; i < positions->size() * 3; i++)
+        for(size_t i = 0; i < positions->size() * 3; i++)
             colors[i] = 0.8f;
-        QByteArray colorData((const char*)colors, npoints * 3 * sizeof(float));
+        QByteArray colorData((const char*)colors, npoints * 3 * static_cast<int>(sizeof(float)));
         colorDataBuffer->setData(colorData);
     }
 
@@ -92,7 +92,7 @@ void PointCloudEntity::setData(const Alembic::Abc::IObject& iObj)
     colorAttribute->setVertexSize(3);
     colorAttribute->setByteOffset(0);
     colorAttribute->setByteStride(3 * sizeof(float));
-    colorAttribute->setCount(npoints);
+    colorAttribute->setCount(static_cast<uint>(npoints));
     colorAttribute->setName(QAttribute::defaultColorAttributeName());
     customGeometry->addAttribute(colorAttribute);
 

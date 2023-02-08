@@ -19,8 +19,8 @@ namespace abcentity
 
 AlembicEntity::AlembicEntity(Qt3DCore::QNode* parent)
     : Qt3DCore::QEntity(parent)
-    , _ioThread(new IOThread())
     , _pointSizeParameter(new Qt3DRender::QParameter)
+    , _ioThread(new IOThread())
 {
     connect(_ioThread.get(), &IOThread::finished, this, &AlembicEntity::onIOThreadFinished);
     createMaterials();
@@ -182,7 +182,7 @@ void AlembicEntity::visitAbcObject(const Alembic::Abc::IObject& iObj, QEntity* p
     using namespace Alembic::Abc;
     using namespace Alembic::AbcGeom;
 
-    const auto createEntity = [&](const IObject& iObject) -> BaseAlembicObject* {
+    const auto createEntity = [&](const IObject&) -> BaseAlembicObject* {
         const MetaData& md = iObj.getMetaData();
 
         if(IPoints::matches(md))
