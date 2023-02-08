@@ -7,7 +7,7 @@ BaseAlembicObject::BaseAlembicObject(Qt3DCore::QNode* parent)
     : Qt3DCore::QEntity(parent)
 {
     _transform = new Qt3DCore::QTransform;
-    addComponent(_transform);    
+    addComponent(_transform);
 }
 
 void BaseAlembicObject::fillArbProperties(const Alembic::Abc::ICompoundProperty &iParent)
@@ -57,7 +57,7 @@ void BaseAlembicObject::addArrayProperty(QVariantMap& data, const Alembic::Abc::
     prop.get(val);
     const PODTYPE* _data = static_cast<const PODTYPE*>(val->getData());
     QVariantList l;
-    l.reserve(val->size());
+    l.reserve(static_cast<int>(val->size()));
     for(size_t k=0; k < val->size(); k++)
     {
         l.append(_data[k]);
@@ -72,7 +72,7 @@ void BaseAlembicObject::addArrayProperty<std::string>(QVariantMap& data, const A
     prop.get(val);
     const std::string* _data = static_cast<const std::string*>(val->getData());
     QVariantList l;
-    l.reserve(val->size());
+    l.reserve(static_cast<int>(val->size()));
     for(size_t k=0; k < val->size(); k++)
     {
         l.append(QString::fromStdString(_data[k]));
@@ -81,7 +81,8 @@ void BaseAlembicObject::addArrayProperty<std::string>(QVariantMap& data, const A
 }
 
 template<typename PODTYPE>
-void BaseAlembicObject::addProperty(QVariantMap& data, const Alembic::Abc::ICompoundProperty& iParent, const Alembic::Abc::PropertyHeader& propHeader)
+void BaseAlembicObject::addProperty(QVariantMap& data, const Alembic::Abc::ICompoundProperty& iParent,
+                                    const Alembic::Abc::PropertyHeader& propHeader)
 {
     if(propHeader.isArray())
     {
@@ -142,6 +143,6 @@ void BaseAlembicObject::fillPropertyMap(const Alembic::Abc::ICompoundProperty& i
             break;
         }
     }
-};
+}
 
 }

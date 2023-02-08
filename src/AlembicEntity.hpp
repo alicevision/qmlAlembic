@@ -29,7 +29,7 @@ class AlembicEntity : public Qt3DCore::QEntity
 
 public:
     // Identical to SceneLoader.Status
-    enum Status { 
+    enum Status {
             None = 0,
             Loading,
             Ready,
@@ -48,11 +48,11 @@ public:
     Q_SLOT void setLocatorScale(const float& value);
 
     Status status() const { return _status; }
-    void setStatus(Status status) { 
-        if(status == _status) 
-            return; 
-        _status = status; 
-        Q_EMIT statusChanged(_status); 
+    void setStatus(Status status) {
+        if(status == _status)
+            return;
+        _status = status;
+        Q_EMIT statusChanged(_status);
     }
 
 private:

@@ -16,7 +16,6 @@ public:
 
 public:
     void setData(const Alembic::Abc::IObject&);
-
 };
 
 } // namespace
